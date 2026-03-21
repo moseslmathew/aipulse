@@ -153,11 +153,10 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="section-label">ANIMATION</div>
         <div class="toggle-row"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
         
-        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Classification</span><div class="t-track" id="demo-toggle" onclick="toggleDemo()"><div class="t-thumb"></div></div></div>
+        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Number Classification</span><div class="t-track" id="demo-toggle" onclick="toggleDemo()"><div class="t-thumb"></div></div></div>
         
         <div class="seg-ctrl" id="img-mode-row" style="display:none;margin-top:6px">
-          <div class="seg-btn" id="scrim-color" onclick="if(demoMode){colorMode=true;document.getElementById('scrim-gray').classList.remove('active');this.classList.add('active');document.getElementById('iv').value=48;document.getElementById('sl-input').value=48;buildNetwork(false);}">🎨 Color</div>
-          <div class="seg-btn active" id="scrim-gray" onclick="if(demoMode){colorMode=false;document.getElementById('scrim-color').classList.remove('active');this.classList.add('active');document.getElementById('iv').value=16;document.getElementById('sl-input').value=16;buildNetwork(false);}">⬛ Grayscale</div>
+          <div class="seg-btn active" id="scrim-gray" onclick="if(demoMode){colorMode=false;document.getElementById('iv').value=16;document.getElementById('sl-input').value=16;buildNetwork(false);}">⬛ Grayscale</div>
         </div>
         
 
@@ -184,9 +183,6 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 
   <!-- ══ MAIN AREA ══ -->
   <div class="main-area">
-    <div style="position:absolute; top:24px; right:24px; z-index:100">
-      <a href="index.html" style="background:#ec4899; color:#fff; padding:10px 18px; border-radius:10px; text-decoration:none; font-family:Inter,sans-serif; font-size:13px; font-weight:700; box-shadow:0 4px 12px rgba(236,72,153,0.3); transition:transform 0.2s">⬅ Return to Vehicle Classification</a>
-    </div>
     <div class="grid-bg"></div>
     <svg id="nn-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     <div id="stats-panel" style="display:none"></div>
@@ -517,11 +513,11 @@ function toggleDemo(){
   document.getElementById('sl-output').closest('.sl-row').style.pointerEvents=demoMode?'none':'auto';
   document.getElementById('img-mode-row').style.display=demoMode?'flex':'none';
   if(demoMode) {
-    demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length); // Pick a random one automatically when turned on
+    demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length);
     VEHICLES[demoVehicleIdx].currentSample = Math.floor(Math.random() * VEHICLES[demoVehicleIdx].samples.length);
     document.getElementById('iv').value = 16; document.getElementById('sl-input').value = 16; colorMode = false;
     document.getElementById('lv').value = 1; document.getElementById('sl-layers').value = 1;
-    document.getElementById('nv').value = 40; document.getElementById('sl-nodes').value = 40;
+    document.getElementById('nv').value = 16; document.getElementById('sl-nodes').value = 16;
     document.getElementById('ov').value = VEHICLES.length; document.getElementById('sl-output').value = VEHICLES.length;
   }
   buildNetwork(false);
