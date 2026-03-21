@@ -68,12 +68,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 .style-opt.active{color:#fff;}
 .demo-on{background:linear-gradient(135deg,#4f46e5,#7c3aed)!important;color:#fff!important;border-color:transparent!important}
 
-/* ── Vehicle grid in sidebar ── */
-.veh-grid{display:flex;flex-direction:column;gap:5px;display:none}
-.veh-grid.show{display:flex}
-.veh-card{padding:8px 12px;border-radius:10px;border:2px solid var(--btn-border);background:var(--btn-bg);cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px;font-size:11px;font-weight:600;color:var(--label);width:100%}
-.veh-card:hover{background:var(--btn-hover);border-color:rgba(99,102,241,0.4)}
-.veh-card.active{border-color:#6366f1;color:#818cf8;background:rgba(99,102,241,0.12)}
+/* ── Main area ── */
 
 /* ── Main area ── */
 .main-area{flex:1;position:relative;background:var(--svg-bg);overflow:hidden}
@@ -153,7 +148,8 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="section-label">ANIMATION</div>
         <div class="toggle-row"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
         
-        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Classification</span><div class="t-track" id="demo-toggle" onclick="toggleDemo()"><div class="t-thumb"></div></div></div>
+        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Vehicle Demo</span><div class="t-track" id="veh-toggle" onclick="toggleDemo('vehicle')"><div class="t-thumb"></div></div></div>
+        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Number Demo</span><div class="t-track" id="mnist-toggle" onclick="toggleDemo('mnist')"><div class="t-thumb"></div></div></div>
         
         <div class="seg-ctrl" id="img-mode-row" style="display:none;margin-top:6px">
           <div class="seg-btn" id="scrim-color" onclick="if(demoMode){colorMode=true;document.getElementById('scrim-gray').classList.remove('active');this.classList.add('active');document.getElementById('iv').value=48;document.getElementById('sl-input').value=48;buildNetwork(false);}">🎨 Color</div>
@@ -184,9 +180,6 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 
   <!-- ══ MAIN AREA ══ -->
   <div class="main-area">
-    <div style="position:absolute; top:24px; right:24px; z-index:100">
-      <a href="mnist.html" style="background:var(--accent); color:#fff; padding:10px 18px; border-radius:10px; text-decoration:none; font-family:Inter,sans-serif; font-size:13px; font-weight:700; box-shadow:0 4px 12px rgba(0,0,0,0.15); transition:transform 0.2s">Explore 5x5 MNIST Demo ➔</a>
-    </div>
     <div class="grid-bg"></div>
     <svg id="nn-svg" xmlns="http://www.w3.org/2000/svg" preserveAspectRatio="xMidYMid meet"></svg>
     <div id="stats-panel" style="display:none"></div>
@@ -259,7 +252,7 @@ function makeImgDrawSVG(imgUrl, accent){
   };
 }
 
-const VEHICLES = [
+const VEHICLE_DATA = [
   {
     id:'car', label:'Sedan', emoji:'🚗', color:'#3b82f6',
     imgUrl:'images/car.png',
@@ -267,7 +260,7 @@ const VEHICLES = [
     R:[.05,.20,.22,.05, .22,.30,.30,.24, .28,.32,.30,.28, .18,.08,.08,.20],
     G:[.05,.42,.48,.05, .55,.70,.70,.58, .72,.78,.74,.72, .50,.15,.15,.52],
     B:[.08,.80,.88,.08, .92,.95,.95,.88, .98,.99,.97,.98, .75,.28,.28,.78],
-    outWeights:[.96,.04,.08,.02,.03,.01,.05,.06],
+    outWeights:[.96,.04,.08,.02,.03,.01,.05,.06,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -277,7 +270,7 @@ const VEHICLES = [
     R:[.96,.96,.58,.12, .98,.99,.90,.92, .98,.99,.94,.94, .72,.72,.28,.72],
     G:[.72,.72,.38,.08, .75,.78,.62,.68, .75,.78,.70,.70, .50,.50,.18,.50],
     B:[.08,.08,.12,.04, .10,.12,.10,.10, .10,.12,.10,.10, .08,.08,.05,.08],
-    outWeights:[.05,.94,.06,.03,.02,.04,.07,.03],
+    outWeights:[.05,.94,.06,.03,.02,.04,.07,.03,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -287,7 +280,7 @@ const VEHICLES = [
     R:[.00,.05,.05,.00, .05,.12,.12,.05, .06,.10,.10,.06, .08,.05,.05,.08],
     G:[.00,.42,.42,.00, .14,.95,.95,.14, .20,.78,.78,.20, .62,.20,.20,.62],
     B:[.00,.18,.18,.00, .08,.45,.45,.08, .10,.32,.32,.10, .28,.08,.08,.28],
-    outWeights:[.04,.02,.95,.05,.03,.06,.04,.02],
+    outWeights:[.04,.02,.95,.05,.03,.06,.04,.02,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -297,7 +290,7 @@ const VEHICLES = [
     R:[.96,.96,.96,.96, .99,.85,.85,.99, .99,.90,.90,.99, .78,.28,.28,.78],
     G:[.12,.12,.12,.12, .14,.10,.10,.14, .14,.12,.12,.14, .10,.05,.05,.10],
     B:[.72,.72,.72,.72, .75,.60,.60,.75, .75,.65,.65,.75, .55,.15,.15,.55],
-    outWeights:[.03,.06,.04,.95,.02,.05,.03,.04],
+    outWeights:[.03,.06,.04,.95,.02,.05,.03,.04,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -307,7 +300,7 @@ const VEHICLES = [
     R:[.98,.98,.98,.98, .99,.75,.75,.99, .95,.90,.90,.95, .70,.40,.40,.70],
     G:[.95,.95,.95,.95, .98,.50,.50,.98, .88,.82,.82,.88, .48,.25,.25,.48],
     B:[.95,.95,.95,.95, .98,.45,.45,.98, .85,.78,.78,.85, .42,.20,.20,.42],
-    outWeights:[.04,.06,.02,.05,.95,.03,.04,.03],
+    outWeights:[.04,.06,.02,.05,.95,.03,.04,.03,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -317,7 +310,7 @@ const VEHICLES = [
     R:[.00,.08,.08,.00, .04,.35,.35,.04, .22,.55,.55,.22, .42,.15,.15,.42],
     G:[.00,.12,.12,.00, .06,.50,.50,.06, .35,.72,.72,.35, .58,.22,.22,.58],
     B:[.00,.10,.10,.00, .05,.42,.42,.05, .28,.65,.65,.28, .52,.18,.18,.52],
-    outWeights:[.02,.03,.08,.02,.03,.96,.05,.04],
+    outWeights:[.02,.03,.08,.02,.03,.96,.05,.04,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -327,7 +320,7 @@ const VEHICLES = [
     R:[.00,.18,.18,.00, .12,.65,.65,.12, .20,.50,.50,.20, .40,.10,.10,.40],
     G:[.00,.22,.22,.00, .16,.75,.75,.16, .28,.60,.60,.28, .50,.14,.14,.50],
     B:[.00,.15,.15,.00, .10,.55,.55,.10, .18,.42,.42,.18, .35,.08,.08,.35],
-    outWeights:[.05,.03,.10,.02,.04,.06,.94,.03],
+    outWeights:[.05,.03,.10,.02,.04,.06,.94,.03,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   },
   {
@@ -337,10 +330,27 @@ const VEHICLES = [
     R:[.08,.48,.50,.08, .60,.72,.72,.60, .70,.78,.78,.70, .50,.18,.18,.50],
     G:[.12,.58,.60,.12, .72,.85,.85,.72, .82,.90,.90,.82, .60,.22,.22,.60],
     B:[.10,.52,.55,.10, .65,.78,.78,.65, .75,.85,.85,.75, .55,.20,.20,.55],
-    outWeights:[.08,.05,.03,.04,.03,.04,.03,.95],
+    outWeights:[.08,.05,.03,.04,.03,.04,.03,.95,0.01,0.01],
     drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
   }
 ];
+
+const MNIST_DATA = [
+  { id:'0', label:'Zero', emoji:'0️⃣', color:'#3b82f6', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAA2ElEQVR4nGNgGEjAu62eE6dk8b9/1mq+vr5SWORCPv/7l/rs379/FzwZMWWDgBLXetPPfPgXh03yfRQbyPj3P2zR5UQv/rSHsPL+bWVCkyz4dx/KSv73TxtNcsa/dihL/Pu/AAzJIBhz4r/p6JJvRWHMDnRJ1pd4JFkub4I78QC6JNu/tTCmxPd/dWg6r8MlsXkFJun2418reiDMeCoEprUf/3uDETG5/xaCqKDH//7FossxqL/497S3d8m/f9+7sESZzfd/IPAjHlMKCNSuAuVWhGOVox8AAHERY5kukqtjAAAAAElFTkSuQmCC', pixels:[0,0,0,0,0, 0,0.45,1,1,0.3, 0.3,0.9,1,1,0.8, 0.3,1,1,1,0.9, 0,0,1,1,0.2] }], currentSample:0, outWeights:[2.95,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01] },
+  { id:'1', label:'One', emoji:'1️⃣', color:'#f59e0b', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAYklEQVR4nGNgGHBwczceyRv/9HFLtuCTbCJbcss/F3wOKsYnicdY/JI/1HHKCT79oYFTkv3eT02ckhH/ruO28uC/87gl2/41kil58J8Tbskj//VwSzb824tbkmF3Ax5JugAAXz4nM7cpRSgAAAAASUVORK5CYII=', pixels:[0,0.8,0.7,0,0, 0,0.8,1,0.1,0, 0,0.5,1,0.1,0, 0,0.8,0.9,0.1,0, 0,0.7,0.5,0,0] }], currentSample:0, outWeights:[0.01,2.95,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01] },
+  { id:'2', label:'Two', emoji:'2️⃣', color:'#10b981', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAxElEQVR4nGNgGFAgUXH83/8rstglmx7PtJz4dz8TVsmTgQwMjBP+LsQqmQki+G5cwSppDCazXyrgdlbyXzs6Skqb9s+ZM+fQG1Uscop3/kLAdR4MObX7L/JYgeD0379vrdElN/yNAFHCd+4l/XidhCb5pRIcqI//5uDETG5/xaCqKDH//7FossxqL/497S3d8m/f9+7sESZzfd/IPAjHlMKCNSuAuVWhGOVox8AAHERY5kukqtjAAAAAElFTkSuQmCC', pixels:[0,0.5,0.8,1,0.1, 0,0.5,1,0.7,0, 0,0,0.4,0.9,0.1, 0,0,0,0.4,0, 0,0.5,1,1,0] }], currentSample:0, outWeights:[0.01,0.01,2.95,0.01,0.01,0.01,0.01,0.01,0.01,0.01] },
+  { id:'3', label:'Three', emoji:'3️⃣', color:'#ec4899', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAA8VlEQVR4nGNgGNSARaB0/4E87HLGDdf//Pn7qpkdi9ysb3//ACX//CnBkOLd8+0PVPKDMbrcmb9//74/IcnAkPr971MuFDnhQ3//vJyoBmbP/PZ3Popk9Z+/L+1gHKMb14WRJY/++WiN4PX+sUCSc/v7NxWJ6//dDsERfvjnMbI5sq+8kTh//nSjSCIbC5SMwi35968MkhzvmYuSKDqRJIUPvUJWKoscnsL7/+xGtoOl4c8+GLvu+Z/pvMiSDFL3/34qkQWC0v3//1qgh3sGLLr+fK8UZkAHRpsgkteMMKRA9srM/POxWIYfmxx1AQAQonZzgQp0pgAAAABJRU5ErkJggg==', pixels:[0,0.4,0.8,0.4,0, 0,0.2,0.9,0.9,0.3, 0,0,0.5,0.9,0.2, 0,0,0.1,0.9,0.1, 0,0.4,0.9,0.9,0.3] }], currentSample:0, outWeights:[0.01,0.01,0.01,2.95,0.01,0.01,0.01,0.01,0.01,0.01] },
+  { id:'4', label:'Four', emoji:'4️⃣', color:'#ef4444', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAA8ElEQVR4nGNgGHBw60UuDhnu2be+//lTi1XOc/+fv3/+/FnAiinFOOHtH7Dk3/maGJL2QPE/52Lf9P/981wfTW4OUN/HRBEuOYaGP39eoMpp3f3zp9QWzIx79GeFKIZkIpQtf/nPeRFkyfa/f8/BBbb9/Z+ELHnzz590OMfyz98TSAYL3PvzB8HjXv/3TwyCm/sHWZJhwt8/1xG8vL9//yLb8v/vTQSHH8VYBgYUnQxH/vwpR4SpKKrkbKClyjBO5rm/f1qQDdoGtPXvqjx+Bgb93Ct//99DCXy9zaCA/3vv5s2XILqLAQUwuh++C4myP3+ee3AxoAOBnFUgyYYcPQwp+gEAiQiSMKhDBTEAAAAASUVORK5CYII=', pixels:[0,0.8,0.4,0,0, 0,0.6,0.8,0,0, 0,0.6,0.9,0.3,0, 0.4,1,1,1,0.5, 0,0,0.4,0,0] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,2.95,0.01,0.01,0.01,0.01,0.01] },
+  { id:'5', label:'Five', emoji:'5️⃣', color:'#06b6d4', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAfElEQVR4nM2RwQ3AMAgDGY3RvJlHoySoKqZ5V+UThcMmELO/ByICJ+DAYifqLJAHJyuU+VU02AZ+t1Vfj8dsws72g8cAPF9KKJXdNpkLbKUuzEJsITYuKxpC3S51LG2pwtFyLER/RQfhewUEsgBghmlkpj5Muze9bfEHcQF2b4iHj1B5UQAAAABJRU5ErkJggg==', pixels:[0,0.5,1,1,0.5, 0,0.2,0.5,0.5,0.5, 0,0.7,1,1,0.7, 0,0,0,0.5,1, 0.2,0.5,0.5,0.5,1] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,0.01,2.95,0.01,0.01,0.01,0.01] },
+  { id:'6', label:'Six', emoji:'6️⃣', color:'#8b5cf6', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAZ0lEQVR4nGNgGGhg888Ot+SWv7b4JKvI0yn/8G8nTkmjv3+X45Rs+YvH2HX4JIvwSQbjkzSiRDIVp6Tik78XhHHKev39a45T0uLv3yU4JdkO/P2mg1N219+/hjglXfBJMrXikaQLAADthDEz2NBKdwAAAABJRU5ErkJggg==', pixels:[0,0.2,1,0.2,0, 0,0.7,0.9,0.2,0, 0,0.7,1,0.9,0.5, 0,0.5,1,1,0.7, 0,0.1,0.9,1,0.2] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,0.01,0.01,2.95,0.01,0.01,0.01] },
+  { id:'7', label:'Seven', emoji:'7️⃣', color:'#14b8a6', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAVklEQVR4nGNgGGggvqMOt2Te57ssuCX//WMlW9IKj+T/XHw6BfFJeuKTxGss+ZIx+CRDcEpW//tnhlPy2r97uIPv2r8vBngk8QQ8+ZIhB50ZcUrSBwAA1uAzW8c7tXgAAAAASUVORK5CYII=', pixels:[0,0.1,0.7,0.5,0, 0,0.4,1,0.8,0, 0,0.4,1,1,0, 0,0.4,1,1,0, 0.4,1,1,1,0.4] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,0.01,0.01,0.01,2.95,0.01,0.01] },
+  { id:'8', label:'Eight', emoji:'8️⃣', color:'#6366f1', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAAwElEQVR4nGNgoDUQaPv37/+tDl5scu6f/r689ejv33xGTDnDd3OCVBhEyr7+DcOU9HgiCqZr/87BIukCoeP/fsSU5GDDIwkDSX8bcMpx3Pxbg1PS7+/fDJySC/4+ZsElF/ThbxYuOYFzf2/x45ATe/X3tiIOOcaov39LcBkq8vfvWUlckpP+frMDUpJSbnoYcot//b0Xu3379tt3/7qhy+V9/wsD7wzQ5JSegsU3zJgxo1sGw9QZf3+3t5viDJ5BAQDCaVYZ6h2zagAAAABJRU5ErkJggg==', pixels:[0,0,0,0,0, 0.1,0.5,1,1,0.5, 0.6,1,0.8,0.8,0.9, 0.4,1,0.9,0.9,0.9, 0.2,0.7,1,1,0.6] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,2.95,0.01] },
+  { id:'9', label:'Nine', emoji:'9️⃣', color:'#f43f5e', samples:[{ b64: 'data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABwAAAAcCAAAAABXZoBIAAAA30lEQVR4nGNgGHCg1HXv718v7HLxf/8AwStBbHIp38CSf2MwpQQ3fPkDkWzFlEwGif9ZUf/n70wMOYm/QPD/lkLs3/+YxkqATJygyBCLzU72WS+3NwFprJIMnIpgqg2HV0Cg5McfT1xyUvf+fsYlx7/pz2sbbBK8bm5uXX/+NGCR6rhwHRwIj2UxpBQu/YKE3J9vcehyrPuBgQMOISA+iSapD9b05/XM9GtA1nRUf/KeAkmecgCyZnz48/diEIqs45s/X7t5wcyAL3//fFBFkRUWE4UxRaf86WDB5le6AACEaIif4ZEKMwAAAABJRU5ErkJggg==', pixels:[0,0.1,0.5,0.8,0.3, 0.4,1,0.9,0.9,0.7, 0.1,0.9,1,1,0.8, 0,0,0.5,1,0.9, 0.1,1,1,1,0.4] }], currentSample:0, outWeights:[0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,0.01,2.95] }
+];
+
+let demoType = 'vehicle';
+let activeData = VEHICLE_DATA;
+const VEHICLES = VEHICLE_DATA;
 
 // ─── SVG shape helpers ────────────────────────────────────────
 function _el(tag,attrs){const e=document.createElementNS(SVG_NS,tag);for(const[k,v]of Object.entries(attrs))e.setAttribute(k,v);return e;}
@@ -499,34 +509,41 @@ function toggleGradEdges(){const t=document.getElementById('grad-toggle');gradEd
 function toggleColorMode(){const t=document.getElementById('color-toggle');colorMode=!t.classList.contains('on');t.classList.toggle('on',colorMode);buildNetwork(false);}
 function onIntensity(){intensity=+document.getElementById('sl-intensity').value;document.getElementById('intv').textContent=intensity;buildNetwork(true);}
 
-function toggleDemo(){
-  demoMode=!demoMode;
-  document.getElementById('demo-toggle').classList.toggle('on',demoMode);
+function toggleDemo(type){
+  if (type) {
+    if (demoMode && demoType === type) {
+      demoMode = false;
+    } else {
+      demoMode = true;
+      demoType = type;
+    }
+  } else {
+    demoMode = !demoMode;
+  }
+
+  activeData = (demoType === 'mnist' ? MNIST_DATA : VEHICLE_DATA);
+  
+  document.getElementById('veh-toggle')?.classList.toggle('on', demoMode && demoType === 'vehicle');
+  document.getElementById('mnist-toggle')?.classList.toggle('on', demoMode && demoType === 'mnist');
+  
   document.getElementById('arch-section').classList.remove('dim');
   document.getElementById('sl-output').closest('.sl-row').style.opacity=demoMode?'0.35':'1';
   document.getElementById('sl-output').closest('.sl-row').style.pointerEvents=demoMode?'none':'auto';
-  document.getElementById('img-mode-row').style.display=demoMode?'flex':'none';
+  document.getElementById('img-mode-row').style.display=(demoMode && demoType === 'vehicle')?'flex':'none';
+  
   if(demoMode) {
-    demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length); // Pick a random one automatically when turned on
-    document.getElementById('iv').value = colorMode ? 48 : 16; document.getElementById('sl-input').value = colorMode ? 48 : 16;
-    document.getElementById('lv').value = 3; document.getElementById('sl-layers').value = 3;
-    document.getElementById('nv').value = 16; document.getElementById('sl-nodes').value = 16;
-    document.getElementById('ov').value = VEHICLES.length; document.getElementById('sl-output').value = VEHICLES.length;
+    demoVehicleIdx = Math.floor(Math.random() * activeData.length);
+    document.getElementById('iv').value = (demoType === 'mnist') ? 25 : (colorMode ? 48 : 16);
+    document.getElementById('sl-input').value = document.getElementById('iv').value;
+    document.getElementById('lv').value = (demoType === 'mnist') ? 1 : 3; 
+    document.getElementById('sl-layers').value = document.getElementById('lv').value;
+    document.getElementById('nv').value = (demoType === 'mnist') ? 5 : 16;
+    document.getElementById('sl-nodes').value = document.getElementById('nv').value;
+    document.getElementById('ov').value = activeData.length; document.getElementById('sl-output').value = activeData.length;
   }
   buildNetwork(false);
 }
 
-function buildVehiclePicker(){
-  const g=document.getElementById('veh-grid');g.innerHTML='';
-  VEHICLES.forEach((v,i)=>{
-    const b=document.createElement('button');
-    b.className='veh-card'+(i===demoVehicleIdx?' active':'');
-    b.style.cssText='padding:7px 10px;display:flex;align-items:center;gap:7px;';
-    b.innerHTML=`<span style="font-size:20px;line-height:1">${v.emoji}</span><span style="font-size:11px;font-weight:600">${v.label}</span>`;
-    b.onclick=()=>{demoVehicleIdx=i;buildVehiclePicker();buildNetwork(true);};
-    g.appendChild(b);
-  });
-}
 
 // ═══ SMIL animation helpers ════════════════════════════════════
 function addDot(svg,ax,ay,bx,by,color,strength,ws,wd,tc){
@@ -635,9 +652,10 @@ function updateStats(layers,acts){
   // Stats panel removed per user request.
 }
 
-// === Vehicle input panel ===================================
+// === Classification input panel ===============================
 function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
-  const CELL=26, COLS=4, ROWS=4;
+  const CELL = (demoType === 'mnist' ? 22 : 26);
+  const COLS = (demoType === 'mnist' ? 5 : 4), ROWS = (demoType === 'mnist' ? 5 : 4);
   const GRID_W=COLS*CELL, GRID_H=ROWS*CELL;
   const IMG_W=130, IMG_H=100;
   const currentVSP = pos[0].length > 1 ? pos[0][1].y - pos[0][0].y : 20;
@@ -645,7 +663,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   const panelLeft=10;
 
   const dispN=Math.min(nInput, pos[0].length);
-  const pixelData=colorMode?veh.R.concat(veh.G).concat(veh.B):veh.pixels;
+  const pixelData=colorMode?veh.R.concat(veh.G).concat(veh.B):(demoType==='mnist' ? veh.samples[veh.currentSample].pixels : veh.pixels);
 
   // Vertical centering — anchor everything to match input node span
   const firstNodeY=pos[0][0].y;
@@ -665,7 +683,20 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'}));
   const vGroup=el('g',{});
-  veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
+  if (demoType === 'mnist' && veh.samples) {
+    const imgId = 'mnist-img-' + Math.random().toString(36).slice(2,8);
+    const img = _el('image', {
+      x: panelLeft + 15, y: imgY + 5, width: IMG_W - 30, height: IMG_H - 10,
+      href: veh.samples[veh.currentSample].b64,
+      preserveAspectRatio: 'xMidYMid meet'
+    });
+    // Add a simple border and label
+    vGroup.appendChild(img);
+    vGroup.appendChild(_el('rect',{x:panelLeft,y:imgY+IMG_H*.82,width:IMG_W,height:IMG_H*.18,rx:0,fill:`rgba(0,0,0,.45)`}));
+    vGroup.appendChild(_el('rect',{x:panelLeft,y:imgY,width:IMG_W,height:IMG_H,rx:12,fill:'none',stroke:veh.color,'stroke-width':'1.8'}));
+  } else if (veh.drawSVG) {
+    veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
+  }
   g.appendChild(vGroup);
 
   // Scan line on image
@@ -695,17 +726,16 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   btn.onmouseenter=()=>{btn.style.background='#2563eb';};
   btn.onmouseleave=()=>{btn.style.background='#3b82f6';};
   btn.onclick=()=>{
-    demoVehicleIdx=(demoVehicleIdx+1)%VEHICLES.length;
+    demoVehicleIdx=(demoVehicleIdx+1)%activeData.length;
+    if(demoType==='mnist') activeData[demoVehicleIdx].currentSample = Math.floor(Math.random()*activeData[demoVehicleIdx].samples.length);
     buildNetwork(false);
   };
   fo.appendChild(btn);
   g.appendChild(fo);
 
   // ── Grid label above ───────────────────────────────────
-  const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-9,'text-anchor':'middle',
-    'font-family':'Inter,sans-serif','font-size':'10','font-weight':'700',
-    'letter-spacing':'.06em',fill:isDark?'#64748b':'#94a3b8'});
-  gridLbl.textContent=colorMode?'4\xd74\xd73 (RGB)':'4\xd74 (Grayscale)';
+  const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-12,'text-anchor':'middle','font-family':'Inter,sans-serif','font-size':'11','font-weight':'700',fill:veh.color});
+  gridLbl.textContent= (demoType === 'mnist') ? '5×5 (Digit)' : (colorMode?'4×4×3 (RGB)':'4×4 (Grayscale)');
   g.appendChild(gridLbl);
 
   // ── Grid cells ─────────────────────────────────────────
@@ -718,7 +748,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
       for(let r=0;r<ROWS;r++){
         for(let cc=0;cc<COLS;cc++){
           const idx=r*COLS+cc;
-          const v = colorMode ? (ch===0?veh.R[idx] : ch===1?veh.G[idx] : veh.B[idx]) : (veh.pixels[idx]??0);
+          const v = colorMode ? (ch===0?veh.R[idx] : ch===1?veh.G[idx] : veh.B[idx]) : ( (demoType==='mnist' ? veh.samples[veh.currentSample].pixels[idx] : veh.pixels[idx]) ?? 0);
           const grey=Math.round(v*255);
           const cx2=gridX+cc*CELL + offsetX, cy2=gridY+r*CELL + offsetY;
           
@@ -795,7 +825,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
 
   // ── Grid → flat pill connectors ────────────────────────
   for(let ni=0;ni<dispN;ni++){
-    const ch = colorMode ? Math.floor(ni/16) : 0; const r = Math.floor((ni%16)/COLS); const cc = (ni%16)%COLS; const offsetX = colorMode ? (ch - 2) * -12 : 0; const offsetY = colorMode ? (ch - 2) * -12 : 0;
+    const ch = colorMode ? Math.floor(ni/16) : 0; const r = Math.floor((ni%(COLS*ROWS))/COLS); const cc = (ni%(COLS*ROWS))%COLS; const offsetX = colorMode ? (ch - 2) * -12 : 0; const offsetY = colorMode ? (ch - 2) * -12 : 0;
     const cellCX=gridX+cc*CELL+CELL/2 + offsetX;
     const cellCY=gridY+r*CELL+CELL/2 + offsetY;
     const nd=pos[0][ni];
@@ -921,7 +951,7 @@ function drawClassPanel(svg,veh,pos,NODE_R,H,tc,tArrRaw){
   const probs=expW.map(e=>e/sumE);
   const winnerIdx=veh.outWeights.indexOf(Math.max(...veh.outWeights));
 
-  VEHICLES.forEach((v2,idx)=>{
+  activeData.forEach((v2,idx)=>{
     if(!pos[pos.length-1][idx])return;
     const{y}=pos[pos.length-1][idx];
     const conf=probs[idx];
@@ -1003,7 +1033,7 @@ function buildNetwork(keepWeights=false){
   const layerDur=SPEED_MAP[spIdx];
 
   const nInput =+document.getElementById('sl-input').value;
-  const nOutput=demoMode?VEHICLES.length :+document.getElementById('sl-output').value;
+  const nOutput=demoMode?activeData.length :+document.getElementById('sl-output').value;
 
   document.getElementById('lv').value=nHidden;
   document.getElementById('nv').value=nNodes;
@@ -1017,22 +1047,23 @@ function buildNetwork(keepWeights=false){
   if(!keepWeights){
     initWeights(layers);
     if(demoMode){
-      const veh=VEHICLES[demoVehicleIdx];
+      const veh=activeData[demoVehicleIdx];
       for(let ni=0;ni<nOutput;ni++)
         for(let pi=0;pi<nNodes;pi++)
           weights[`${total-2}-${pi}-${ni}`]=+((-0.3+veh.outWeights[ni]*.9)*(Math.random()*.6+.7)).toFixed(2);
     }
   }
 
-  const fullPixels=demoMode?(colorMode?[...VEHICLES[demoVehicleIdx].R,...VEHICLES[demoVehicleIdx].G,...VEHICLES[demoVehicleIdx].B]:VEHICLES[demoVehicleIdx].pixels):null;
+  const currentVeh = activeData[demoVehicleIdx];
+  const fullPixels=demoMode?(colorMode?[...currentVeh.R,...currentVeh.G,...currentVeh.B]:(demoType==='mnist'?currentVeh.samples[currentVeh.currentSample].pixels:currentVeh.pixels)):null;
   const inputActs=demoMode?fullPixels.slice(0,nInput).concat(Array(Math.max(0,nInput-fullPixels.length)).fill(0)):undefined;
   const acts=computeActivations(layers,inputActs);
 
   if(demoMode){
-    const veh=VEHICLES[demoVehicleIdx];
+    const veh=activeData[demoVehicleIdx];
     const expW=veh.outWeights.map(w=>Math.exp(w*3));
     const sumE=expW.reduce((a,b)=>a+b,0);
-    for(let i=0;i<nOutput;i++)acts[total-1][i]=expW[i]/sumE;
+    for(let i=0;i<nOutput;i++)if(acts[total-1][i]!==undefined)acts[total-1][i]=expW[i]/sumE;
   }
 
   const outActs=acts[total-1];
@@ -1083,7 +1114,7 @@ function buildNetwork(keepWeights=false){
   });
 
   // Demo input panel
-  if(demoMode) drawVehiclePanel(svg,VEHICLES[demoVehicleIdx],pos,NODE_R,H,tc,nInput,tExt);
+  if(demoMode) drawVehiclePanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc,nInput,tExt);
 
   // Edges
   const tip=document.getElementById('wt-tip');
@@ -1157,7 +1188,7 @@ function buildNetwork(keepWeights=false){
 
     // In demo mode, show actual tensor size as a small badge clearly below the layer pill
     if(demoMode&&li===0){
-      const tensorSize=colorMode?'3×4×4=48':'4×4=16';
+      const tensorSize= (demoType==='mnist') ? '5×5=25' : (colorMode?'3×4×4=48':'4×4=16');
       const sw2=tensorSize.length*6+14;
       pg.appendChild(el('rect',{x:cx-sw2/2,y:38,width:sw2,height:15,rx:7.5,
         fill:isDark?'rgba(99,102,241,.18)':'rgba(99,102,241,.1)',
@@ -1178,11 +1209,11 @@ function buildNetwork(keepWeights=false){
       } else {
         // Pixel intensity tint on input nodes in demo mode
         let outerFill=isDark?col.fill:'#fff',coreFill=col.core,coreOp='.88';
-        if(demoMode&&li===0&&VEHICLES[demoVehicleIdx].pixels[ni]!==undefined){
-          const pv=VEHICLES[demoVehicleIdx].pixels[ni];
-          coreFill=VEHICLES[demoVehicleIdx].color;
+        if(demoMode&&li===0&& ni < (demoType==='mnist'?activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels.length : activeData[demoVehicleIdx].pixels.length)){
+          const pv= (demoType==='mnist' ? activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels[ni] : activeData[demoVehicleIdx].pixels[ni]);
+          coreFill=activeData[demoVehicleIdx].color;
           coreOp=(0.2+pv*.8).toFixed(2);
-          outerFill=`rgba(${hexToRgb(VEHICLES[demoVehicleIdx].color)},${(.04+pv*.16).toFixed(2)})`;
+          outerFill=`rgba(${hexToRgb(activeData[demoVehicleIdx].color)},${(.04+pv*.16).toFixed(2)})`;
         }
         const outer=el('circle',{cx:x,cy:y,r,fill:outerFill,stroke:col.stroke,'stroke-width':'2',class:'nn-node-outer'});
         svg.appendChild(outer);
@@ -1209,9 +1240,9 @@ function buildNetwork(keepWeights=false){
 
         // Input value labels
         if(li===0 && !autoHideLabels){
-          if(demoMode && VEHICLES[demoVehicleIdx].pixels[ni]!==undefined){
-            const pv=VEHICLES[demoVehicleIdx].pixels[ni];
-            const pvl=el('text',{x,y:y-r-4,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'7.5','font-weight':'600',fill:VEHICLES[demoVehicleIdx].color,opacity:'.7'});
+          if(demoMode && ni < (demoType==='mnist'?activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels.length : activeData[demoVehicleIdx].pixels.length)){
+            const pv= (demoType==='mnist' ? activeData[demoVehicleIdx].samples[activeData[demoVehicleIdx].currentSample].pixels[ni] : activeData[demoVehicleIdx].pixels[ni]);
+            const pvl=el('text',{x,y:y-r-4,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'7.5','font-weight':'600',fill:activeData[demoVehicleIdx].color,opacity:'.7'});
             pvl.textContent=pv.toFixed(2);svg.appendChild(pvl);
           } else if (!demoMode) {
             const val=acts[0][ni]||0;
@@ -1259,7 +1290,7 @@ function buildNetwork(keepWeights=false){
 
   // Demo output panel
   const tArr = (tExt + nSeg * layerDur) / tc;
-  if(demoMode) drawClassPanel(svg,VEHICLES[demoVehicleIdx],pos,NODE_R,H,tc, tArr);
+  if(demoMode) drawClassPanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc, tArr);
 
   updateStats(layers,acts);
   if(entranceAnim && !demoMode) requestAnimationFrame(runEntranceAnimation);
@@ -1273,7 +1304,10 @@ initCounters();
 ['sl-speed'].forEach(id=>document.getElementById(id).addEventListener('input',()=>buildNetwork(false)));
 document.getElementById('sl-speed').addEventListener('input',()=>buildNetwork(true));
 document.getElementById('btn-randomize').addEventListener('click',()=>{
-  if (demoMode) demoVehicleIdx = (demoVehicleIdx + 1) % VEHICLES.length;
+  if (demoMode) {
+    demoVehicleIdx = (demoVehicleIdx + 1) % activeData.length;
+    if(demoType==='mnist') activeData[demoVehicleIdx].currentSample = Math.floor(Math.random()*activeData[demoVehicleIdx].samples.length);
+  }
   buildNetwork(false);
 });
 </script>
