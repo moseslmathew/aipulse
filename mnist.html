@@ -519,9 +519,9 @@ function toggleDemo(){
   if(demoMode) {
     demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length); // Pick a random one automatically when turned on
     VEHICLES[demoVehicleIdx].currentSample = Math.floor(Math.random() * VEHICLES[demoVehicleIdx].samples.length);
-    document.getElementById('iv').value = 784; document.getElementById('sl-input').value = 784; colorMode = false;
+    document.getElementById('iv').value = 16; document.getElementById('sl-input').value = 16; colorMode = false;
     document.getElementById('lv').value = 1; document.getElementById('sl-layers').value = 1;
-    document.getElementById('nv').value = 40; document.getElementById('sl-nodes').value = 40;
+    document.getElementById('nv').value = 16; document.getElementById('sl-nodes').value = 16;
     document.getElementById('ov').value = VEHICLES.length; document.getElementById('sl-output').value = VEHICLES.length;
   }
   buildNetwork(false);
