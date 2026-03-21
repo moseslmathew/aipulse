@@ -257,86 +257,16 @@ function makeImgDrawSVG(imgUrl, accent){
 }
 
 const VEHICLES = [
-  {
-    id:'car', label:'Sedan', emoji:'🚗', color:'#3b82f6',
-    imgUrl:'images/car.png',
-    pixels:[.05,.55,.60,.05, .70,.85,.85,.72, .88,.92,.90,.88, .60,.20,.20,.62],
-    R:[.05,.20,.22,.05, .22,.30,.30,.24, .28,.32,.30,.28, .18,.08,.08,.20],
-    G:[.05,.42,.48,.05, .55,.70,.70,.58, .72,.78,.74,.72, .50,.15,.15,.52],
-    B:[.08,.80,.88,.08, .92,.95,.95,.88, .98,.99,.97,.98, .75,.28,.28,.78],
-    outWeights:[.96,.04,.08,.02,.03,.01,.05,.06],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'truck', label:'Truck', emoji:'🚚', color:'#f59e0b',
-    imgUrl:'images/truck.png',
-    pixels:[.90,.90,.50,.10, .92,.95,.80,.85, .92,.95,.88,.88, .65,.65,.22,.65],
-    R:[.96,.96,.58,.12, .98,.99,.90,.92, .98,.99,.94,.94, .72,.72,.28,.72],
-    G:[.72,.72,.38,.08, .75,.78,.62,.68, .75,.78,.70,.70, .50,.50,.18,.50],
-    B:[.08,.08,.12,.04, .10,.12,.10,.10, .10,.12,.10,.10, .08,.08,.05,.08],
-    outWeights:[.05,.94,.06,.03,.02,.04,.07,.03],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'motorcycle', label:'Moto', emoji:'🏍️', color:'#10b981',
-    imgUrl:'images/motorcycle.png',
-    pixels:[.00,.30,.30,.00, .10,.88,.88,.10, .15,.60,.60,.15, .50,.15,.15,.50],
-    R:[.00,.05,.05,.00, .05,.12,.12,.05, .06,.10,.10,.06, .08,.05,.05,.08],
-    G:[.00,.42,.42,.00, .14,.95,.95,.14, .20,.78,.78,.20, .62,.20,.20,.62],
-    B:[.00,.18,.18,.00, .08,.45,.45,.08, .10,.32,.32,.10, .28,.08,.08,.28],
-    outWeights:[.04,.02,.95,.05,.03,.06,.04,.02],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'bus', label:'Bus', emoji:'🚌', color:'#ec4899',
-    imgUrl:'images/bus.png',
-    pixels:[.88,.88,.88,.88, .92,.75,.75,.92, .92,.80,.80,.92, .68,.20,.20,.68],
-    R:[.96,.96,.96,.96, .99,.85,.85,.99, .99,.90,.90,.99, .78,.28,.28,.78],
-    G:[.12,.12,.12,.12, .14,.10,.10,.14, .14,.12,.12,.14, .10,.05,.05,.10],
-    B:[.72,.72,.72,.72, .75,.60,.60,.75, .75,.65,.65,.75, .55,.15,.15,.55],
-    outWeights:[.03,.06,.04,.95,.02,.05,.03,.04],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'ambulance', label:'Ambulance', emoji:'🚑', color:'#ef4444',
-    imgUrl:'images/ambulance.png',
-    pixels:[.95,.95,.95,.95, .98,.60,.60,.98, .90,.85,.85,.90, .55,.30,.30,.55],
-    R:[.98,.98,.98,.98, .99,.75,.75,.99, .95,.90,.90,.95, .70,.40,.40,.70],
-    G:[.95,.95,.95,.95, .98,.50,.50,.98, .88,.82,.82,.88, .48,.25,.25,.48],
-    B:[.95,.95,.95,.95, .98,.45,.45,.98, .85,.78,.78,.85, .42,.20,.20,.42],
-    outWeights:[.04,.06,.02,.05,.95,.03,.04,.03],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'bicycle', label:'Bicycle', emoji:'🚲', color:'#06b6d4',
-    imgUrl:'images/bicycle.png',
-    pixels:[.00,.10,.10,.00, .05,.45,.45,.05, .30,.70,.70,.30, .55,.20,.20,.55],
-    R:[.00,.08,.08,.00, .04,.35,.35,.04, .22,.55,.55,.22, .42,.15,.15,.42],
-    G:[.00,.12,.12,.00, .06,.50,.50,.06, .35,.72,.72,.35, .58,.22,.22,.58],
-    B:[.00,.10,.10,.00, .05,.42,.42,.05, .28,.65,.65,.28, .52,.18,.18,.52],
-    outWeights:[.02,.03,.08,.02,.03,.96,.05,.04],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'scooter', label:'Scooter', emoji:'🛵', color:'#8b5cf6',
-    imgUrl:'images/scooter.png',
-    pixels:[.00,.20,.20,.00, .15,.72,.72,.15, .25,.58,.58,.25, .48,.12,.12,.48],
-    R:[.00,.18,.18,.00, .12,.65,.65,.12, .20,.50,.50,.20, .40,.10,.10,.40],
-    G:[.00,.22,.22,.00, .16,.75,.75,.16, .28,.60,.60,.28, .50,.14,.14,.50],
-    B:[.00,.15,.15,.00, .10,.55,.55,.10, .18,.42,.42,.18, .35,.08,.08,.35],
-    outWeights:[.05,.03,.10,.02,.04,.06,.94,.03],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  },
-  {
-    id:'suv', label:'SUV', emoji:'🚙', color:'#14b8a6',
-    imgUrl:'images/suv.png',
-    pixels:[.10,.60,.62,.10, .75,.88,.88,.75, .85,.92,.92,.85, .62,.25,.25,.62],
-    R:[.08,.48,.50,.08, .60,.72,.72,.60, .70,.78,.78,.70, .50,.18,.18,.50],
-    G:[.12,.58,.60,.12, .72,.85,.85,.72, .82,.90,.90,.82, .60,.22,.22,.60],
-    B:[.10,.52,.55,.10, .65,.78,.78,.65, .75,.85,.85,.75, .55,.20,.20,.55],
-    outWeights:[.08,.05,.03,.04,.03,.04,.03,.95],
-    drawSVG(S,x,y,w,h,dk,cm){ makeImgDrawSVG(this.imgUrl, this.color)(S,x,y,w,h,dk,cm); }
-  }
+  { id:'0', label:'Zero', emoji:'0️⃣', color:'#3b82f6', pixels:[0,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 0,1,1,1,0], outWeights:[2.95,.01,.01,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'1', label:'One', emoji:'1️⃣', color:'#f59e0b', pixels:[0,0,1,0,0, 0,1,1,0,0, 0,0,1,0,0, 0,0,1,0,0, 0,1,1,1,0], outWeights:[.01,2.95,.01,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'2', label:'Two', emoji:'2️⃣', color:'#10b981', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,0,0,1,0, 0,0,1,0,0, 1,1,1,1,1], outWeights:[.01,.01,2.95,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'3', label:'Three', emoji:'3️⃣', color:'#ec4899', pixels:[1,1,1,1,0, 0,0,0,0,1, 0,0,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,2.95,.01,.01,.01,.01,.01,.01] },
+  { id:'4', label:'Four', emoji:'4️⃣', color:'#8b5cf6', pixels:[0,0,0,1,0, 0,0,1,1,0, 0,1,0,1,0, 1,1,1,1,1, 0,0,0,1,0], outWeights:[.01,.01,.01,.01,2.95,.01,.01,.01,.01,.01] },
+  { id:'5', label:'Five', emoji:'5️⃣', color:'#ef4444', pixels:[1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,2.95,.01,.01,.01,.01] },
+  { id:'6', label:'Six', emoji:'6️⃣', color:'#06b6d4', pixels:[0,0,1,1,0, 0,1,0,0,0, 1,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,2.95,.01,.01,.01] },
+  { id:'7', label:'Seven', emoji:'7️⃣', color:'#f97316', pixels:[1,1,1,1,1, 0,0,0,1,0, 0,0,1,0,0, 0,1,0,0,0, 1,0,0,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,2.95,.01,.01] },
+  { id:'8', label:'Eight', emoji:'8️⃣', color:'#14b8a6', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,2.95,.01] },
+  { id:'9', label:'Nine', emoji:'9️⃣', color:'#a855f7', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,1, 0,0,0,1,0, 0,1,1,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,.01,2.95] }
 ];
 
 // ─── SVG shape helpers ────────────────────────────────────────
@@ -505,7 +435,7 @@ function toggleDemo(){
   document.getElementById('img-mode-row').style.display=demoMode?'flex':'none';
   if(demoMode) {
     demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length); // Pick a random one automatically when turned on
-    document.getElementById('iv').value = colorMode ? 48 : 16; document.getElementById('sl-input').value = colorMode ? 48 : 16;
+    document.getElementById('iv').value = 25; document.getElementById('sl-input').value = 25; colorMode = false;
     document.getElementById('lv').value = 3; document.getElementById('sl-layers').value = 3;
     document.getElementById('nv').value = 16; document.getElementById('sl-nodes').value = 16;
     document.getElementById('ov').value = VEHICLES.length; document.getElementById('sl-output').value = VEHICLES.length;
@@ -634,7 +564,7 @@ function updateStats(layers,acts){
 
 // === Vehicle input panel ===================================
 function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
-  const CELL=26, COLS=4, ROWS=4;
+  const CELL=20, COLS=5, ROWS=5;
   const GRID_W=COLS*CELL, GRID_H=ROWS*CELL;
   const IMG_W=130, IMG_H=100;
   const currentVSP = pos[0].length > 1 ? pos[0][1].y - pos[0][0].y : 20;
@@ -662,7 +592,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'}));
   const vGroup=el('g',{});
-  veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
+  vGroup.appendChild(el('text', {x:panelLeft+IMG_W/2,y:imgY+IMG_H*0.75,'text-anchor':'middle','font-size':IMG_H*0.7,fill:isDark?'white':'#0f172a'})).textContent=veh.emoji;
   g.appendChild(vGroup);
 
   // Scan line on image
@@ -702,7 +632,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-9,'text-anchor':'middle',
     'font-family':'Inter,sans-serif','font-size':'10','font-weight':'700',
     'letter-spacing':'.06em',fill:isDark?'#64748b':'#94a3b8'});
-  gridLbl.textContent=colorMode?'4\xd74\xd73 (RGB)':'4\xd74 (Grayscale)';
+  gridLbl.textContent=colorMode?'5\xd75 (MNIST)':'5\xd75 (MNIST Grayscale)';
   g.appendChild(gridLbl);
 
   // ── Grid cells ─────────────────────────────────────────
@@ -792,7 +722,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
 
   // ── Grid → flat pill connectors ────────────────────────
   for(let ni=0;ni<dispN;ni++){
-    const ch = colorMode ? Math.floor(ni/16) : 0; const r = Math.floor((ni%16)/COLS); const cc = (ni%16)%COLS; const offsetX = colorMode ? (ch - 2) * -12 : 0; const offsetY = colorMode ? (ch - 2) * -12 : 0;
+    const ch = colorMode ? Math.floor(ni/16) : 0; const r = Math.floor((ni%25)/COLS); const cc = (ni%25)%COLS; const offsetX = colorMode ? (ch - 2) * -12 : 0; const offsetY = colorMode ? (ch - 2) * -12 : 0;
     const cellCX=gridX+cc*CELL+CELL/2 + offsetX;
     const cellCY=gridY+r*CELL+CELL/2 + offsetY;
     const nd=pos[0][ni];
@@ -820,7 +750,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
 
     for(let ni=0;ni<dispN;ni++){
       const ch = colorMode ? Math.floor(ni/16) : 0;
-      const cellIdx = ni % 16;
+      const cellIdx = ni % 25;
 
       // In color mode: all 16 cells in a channel start together (same t0), staggered slightly by row
       // In grayscale: sequential stagger across all cells
@@ -829,8 +759,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
       const t0 = phaseStart + chStart + stagger;
       const t1 = Math.min(phaseEnd, t0 + flyDur);
 
-      const r = Math.floor((ni%16)/COLS);
-      const cc = (ni%16)%COLS;
+      const r = Math.floor((ni%25)/COLS);
+      const cc = (ni%25)%COLS;
       const offsetX = colorMode ? (ch - 2) * -12 : 0;
       const offsetY = colorMode ? (ch - 2) * -12 : 0;
       const cellCX=gridX+cc*CELL+CELL/2 + offsetX;
@@ -839,7 +769,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
       const destX=flatX+PILL_W/2;
       const destY=nd.y;
       const pv=pixelData[ni]??0;
-      const dotColor=colorMode?(ni<16?'#ef4444':ni<32?'#10b981':'#3b82f6'):veh.color;
+      const dotColor=colorMode?(veh.color):veh.color;
       const t0f=t0.toFixed(5), t1f=t1.toFixed(5);
       const tPre=Math.max(0,t0-.001).toFixed(5);
 
@@ -900,7 +830,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   if (lineMode==='dynamic') {
      for(let ni=0;ni<dispN;ni++){
         const pv=pixelData[ni]??0;
-        const color = colorMode?(ni<16?'#ef4444':ni<32?'#10b981':'#3b82f6'):veh.color;
+        const color = colorMode?(veh.color):veh.color;
         addDot(svg, flatX+PILL_W, pos[0][ni].y, pos[0][ni].x-NODE_R-2, pos[0][ni].y, color, pv, tExt * 0.7, tExt * 0.3, tc);
       }
   }
