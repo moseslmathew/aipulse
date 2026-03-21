@@ -1160,28 +1160,71 @@ function buildNetwork(keepWeights=false){
           outerFill=`rgba(${hexToRgb(VEHICLES[demoVehicleIdx].color)},${(.04+pv*.16).toFixed(2)})`;
         }
         const outer=el('circle',{cx:x,cy:y,r,fill:outerFill,stroke:col.stroke,'stroke-width':'2',class:'nn-node-outer'});
-        const core=el('circle',{cx:x,cy:y,r:r*.44,fill:coreFill,opacity:coreOp,class:'nn-node-core'});
-        svg.appendChild(outer);svg.appendChild(core);
+        svg.appendChild(outer);
+        
+        let core;
+        if (demoMode && li > 0 && r >= 6) {
+          core = el('g', {class:'nn-node-core', style:`transform-origin: ${x}px ${y}px;`});
+          const featureW = r * 1.1; 
+          const ps = featureW / 3;
+          for(let dy=0; dy<3; dy++){
+            for(let dx=0; dx<3; dx++){
+               const px = x - featureW/2 + dx*ps;
+               const py = y - featureW/2 + dy*ps;
+               const seed = Math.sin(li*100 + ni*10 + dx*3 + dy) * 10000;
+               const intensity = seed - Math.floor(seed);
+               const rect = el('rect', {x:px, y:py, width:ps+.3, height:ps+.3, rx:0.5, fill:col.text, opacity:(0.2 + 0.8*intensity).toFixed(2)});
+               core.appendChild(rect);
+            }
+          }
+        } else {
+          core = el('circle',{cx:x,cy:y,r:r*.44,fill:coreFill,opacity:coreOp,class:'nn-node-core'});
+        }
+        svg.appendChild(core);
 
-        // Pixel value above input node (demo) — only when nodes are large enough
-        if(demoMode&&li===0&&!autoHideLabels&&VEHICLES[demoVehicleIdx].pixels[ni]!==undefined){
-          const pv=VEHICLES[demoVehicleIdx].pixels[ni];
-          const pvl=el('text',{x,y:y-r-4,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'7.5','font-weight':'600',fill:VEHICLES[demoVehicleIdx].color,opacity:'.7'});
-          pvl.textContent=pv.toFixed(2);svg.appendChild(pvl);
+        // Input value labels
+        if(li===0 && !autoHideLabels){
+          if(demoMode && VEHICLES[demoVehicleIdx].pixels[ni]!==undefined){
+            const pv=VEHICLES[demoVehicleIdx].pixels[ni];
+            const pvl=el('text',{x,y:y-r-4,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'7.5','font-weight':'600',fill:VEHICLES[demoVehicleIdx].color,opacity:'.7'});
+            pvl.textContent=pv.toFixed(2);svg.appendChild(pvl);
+          } else if (!demoMode) {
+            const val=acts[0][ni]||0;
+            // Draw generic dummy input pill feeding from the left
+            const pillW=32, pillH=15;
+            svg.appendChild(el('line',{x1:x-r-25,y1:y,x2:x-r-2,y2:y,stroke:col.stroke,'stroke-width':1.5,opacity:'.3'}));
+            svg.appendChild(el('rect',{x:x-r-10-pillW,y:y-pillH/2,width:pillW,height:pillH,rx:4,fill:isDark?'rgba(15,23,42,.6)':'#f8fafc',stroke:col.stroke,'stroke-width':'1',opacity:'.8'}));
+            const pvl=el('text',{x:x-r-10-pillW/2,y:y+3,'text-anchor':'middle','font-family':'JetBrains Mono,monospace','font-size':'8','font-weight':'700',fill:isDark?'#cbd5e1':'#334155'});
+            pvl.textContent=val.toFixed(2);svg.appendChild(pvl);
+          }
         }
 
         const hn=el('circle',{cx:x,cy:y,r:Math.max(r+5,8),fill:'transparent',style:'cursor:pointer'});
         hn.addEventListener('mouseenter',()=>{
           gsap.to(outer,{attr:{r:r*1.26,'stroke-width':3},duration:.28,ease:'back.out(2.5)',overwrite:true});
-          gsap.to(core,{attr:{r:r*.62},duration:.28,ease:'back.out(2.5)',overwrite:true});
+          if(core.tagName==='circle') gsap.to(core,{attr:{r:r*.62},duration:.28,ease:'back.out(2.5)',overwrite:true});
           const actVal=acts[li]&&acts[li][ni]!=null?acts[li][ni].toFixed(3):'—';
-          tip.textContent=`act: ${actVal}`;tip.style.opacity='1';
+          if (core.tagName === 'g') {
+            let gridHtml = `<div style="display:grid; grid-template-columns:repeat(3, 1fr); gap:3px; width:64px; height:64px; margin-bottom:8px">`;
+            for(let dy=0; dy<3; dy++){
+              for(let dx=0; dx<3; dx++){
+                const seed = Math.sin(li*100 + ni*10 + dx*3 + dy) * 10000;
+                const intensity = seed - Math.floor(seed);
+                gridHtml += `<div style="background:${col.text}; opacity:${(0.2 + 0.8*intensity).toFixed(2)}; border-radius:2px"></div>`;
+              }
+            }
+            gridHtml += `</div><div style="text-align:center; color:${isDark?'#cbd5e1':'#e2e8f0'}">act: <span style="color:#fff">${actVal}</span></div>`;
+            tip.innerHTML = gridHtml;
+          } else {
+            tip.textContent = `act: ${actVal}`;
+          }
+          tip.style.opacity='1';
         });
         hn.addEventListener('mousemove',ev=>{tip.style.left=(ev.clientX+14)+'px';tip.style.top=(ev.clientY-28)+'px';});
         hn.addEventListener('mouseleave',()=>{
           tip.style.opacity='0';
           gsap.to(outer,{attr:{r,'stroke-width':2},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
-          gsap.to(core,{attr:{r:r*.44},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
+          if(core.tagName==='circle') gsap.to(core,{attr:{r:r*.44},duration:.45,ease:'elastic.out(1,.5)',overwrite:true});
         });
         svg.appendChild(hn);
         if(li===0&&lineMode==='dynamic')addFlash(svg,x,y,col,r,0,layerDur*.4,tc);
