@@ -153,10 +153,13 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
         <div class="section-label">ANIMATION</div>
         <div class="toggle-row"><span class="tgl-lbl" id="dyn-lbl">Dynamic Flow</span><div class="t-track on" id="dyn-toggle" onclick="toggleDynamic()"><div class="t-thumb"></div></div></div>
         
-        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Number Classification</span><div class="t-track" id="demo-toggle" onclick="toggleDemo()"><div class="t-thumb"></div></div></div>
+        <div class="toggle-row" style="margin-top:6px"><span class="tgl-lbl">Number Classification</span><div class="t-track" id="demo-toggle" onclick="toggleDemo('mnist')"><div class="t-thumb"></div></div></div>
+        
+        <div class="toggle-row" id="veh-demo-row" style="margin-top:6px"><span class="tgl-lbl">Vehicle Classification</span><div class="t-track" id="veh-toggle" onclick="toggleDemo('vehicle')"><div class="t-thumb"></div></div></div>
         
         <div class="seg-ctrl" id="img-mode-row" style="display:none;margin-top:6px">
-          <div class="seg-btn active" id="scrim-gray" onclick="if(demoMode){colorMode=false;document.getElementById('iv').value=16;document.getElementById('sl-input').value=16;buildNetwork(false);}">⬛ Grayscale</div>
+          <div class="seg-btn" id="scrim-color" onclick="if(demoMode){colorMode=true;document.getElementById('scrim-gray').classList.remove('active');this.classList.add('active');document.getElementById('iv').value=48;document.getElementById('sl-input').value=48;buildNetwork(false);}">🎨 Color</div>
+          <div class="seg-btn active" id="scrim-gray" onclick="if(demoMode){colorMode=false;document.getElementById('scrim-color').classList.remove('active');this.classList.add('active');document.getElementById('iv').value=16;document.getElementById('sl-input').value=16;buildNetwork(false);}">⬛ Grayscale</div>
         </div>
         
 
@@ -505,17 +508,43 @@ function toggleGradEdges(){const t=document.getElementById('grad-toggle');gradEd
 function toggleColorMode(){const t=document.getElementById('color-toggle');colorMode=!t.classList.contains('on');t.classList.toggle('on',colorMode);buildNetwork(false);}
 function onIntensity(){intensity=+document.getElementById('sl-intensity').value;document.getElementById('intv').textContent=intensity;buildNetwork(true);}
 
-function toggleDemo(){
-  demoMode=!demoMode;
-  document.getElementById('demo-toggle').classList.toggle('on',demoMode);
+let demoType = 'mnist'; // 'mnist' or 'vehicle'
+
+function toggleDemo(type){
+  if (type) {
+    if (demoMode && demoType !== type) {
+       // Switching mode while on: just change type and re-init
+       demoType = type;
+    } else {
+       demoMode = !demoMode;
+       demoType = type;
+    }
+  } else {
+    demoMode = !demoMode;
+  }
+  
+  document.getElementById('demo-toggle').classList.toggle('on', demoMode && demoType==='mnist');
+  document.getElementById('veh-toggle').classList.toggle('on', demoMode && demoType==='vehicle');
+  
   document.getElementById('arch-section').classList.remove('dim');
   document.getElementById('sl-output').closest('.sl-row').style.opacity=demoMode?'0.35':'1';
   document.getElementById('sl-output').closest('.sl-row').style.pointerEvents=demoMode?'none':'auto';
-  document.getElementById('img-mode-row').style.display=demoMode?'flex':'none';
+  
+  // Only show color option for vehicle mode
+  document.getElementById('img-mode-row').style.display = (demoMode && demoType==='vehicle') ? 'flex' : 'none';
+  
   if(demoMode) {
     demoVehicleIdx = Math.floor(Math.random() * VEHICLES.length);
     VEHICLES[demoVehicleIdx].currentSample = Math.floor(Math.random() * VEHICLES[demoVehicleIdx].samples.length);
-    document.getElementById('iv').value = 16; document.getElementById('sl-input').value = 16; colorMode = false;
+    
+    if (demoType === 'mnist') {
+      document.getElementById('iv').value = 16; document.getElementById('sl-input').value = 16; colorMode = false;
+    } else {
+      document.getElementById('iv').value = 48; document.getElementById('sl-input').value = 48; colorMode = true;
+      document.getElementById('scrim-color').classList.add('active');
+      document.getElementById('scrim-gray').classList.remove('active');
+    }
+    
     document.getElementById('lv').value = 1; document.getElementById('sl-layers').value = 1;
     document.getElementById('nv').value = 16; document.getElementById('sl-nodes').value = 16;
     document.getElementById('ov').value = VEHICLES.length; document.getElementById('sl-output').value = VEHICLES.length;
