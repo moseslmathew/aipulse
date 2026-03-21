@@ -717,7 +717,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   const gridLbl=el('text',{x:gridX+GRID_W/2,y:gridY-9,'text-anchor':'middle',
     'font-family':'Inter,sans-serif','font-size':'10','font-weight':'700',
     'letter-spacing':'.06em',fill:isDark?'#64748b':'#94a3b8'});
-  gridLbl.textContent=colorMode?'28\xd728 (Full MNIST)':'5\xd75 (MNIST Grayscale)';
+  gridLbl.textContent=colorMode?'28\xd728 (Full RGB)':'28\xd728 (MNIST Grayscale)';
   g.appendChild(gridLbl);
 
   // ── Grid cells ─────────────────────────────────────────
