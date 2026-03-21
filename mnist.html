@@ -260,16 +260,16 @@ function makeImgDrawSVG(imgUrl, accent){
 }
 
 const VEHICLES = [
-  { id:'0', label:'Zero', emoji:'0️⃣', color:'#3b82f6', pixels:[0,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 0,1,1,1,0], outWeights:[2.95,.01,.01,.01,.01,.01,.01,.01,.01,.01] },
-  { id:'1', label:'One', emoji:'1️⃣', color:'#f59e0b', pixels:[0,0,1,0,0, 0,1,1,0,0, 0,0,1,0,0, 0,0,1,0,0, 0,1,1,1,0], outWeights:[.01,2.95,.01,.01,.01,.01,.01,.01,.01,.01] },
-  { id:'2', label:'Two', emoji:'2️⃣', color:'#10b981', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,0,0,1,0, 0,0,1,0,0, 1,1,1,1,1], outWeights:[.01,.01,2.95,.01,.01,.01,.01,.01,.01,.01] },
-  { id:'3', label:'Three', emoji:'3️⃣', color:'#ec4899', pixels:[1,1,1,1,0, 0,0,0,0,1, 0,0,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,2.95,.01,.01,.01,.01,.01,.01] },
-  { id:'4', label:'Four', emoji:'4️⃣', color:'#8b5cf6', pixels:[0,0,0,1,0, 0,0,1,1,0, 0,1,0,1,0, 1,1,1,1,1, 0,0,0,1,0], outWeights:[.01,.01,.01,.01,2.95,.01,.01,.01,.01,.01] },
-  { id:'5', label:'Five', emoji:'5️⃣', color:'#ef4444', pixels:[1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,2.95,.01,.01,.01,.01] },
-  { id:'6', label:'Six', emoji:'6️⃣', color:'#06b6d4', pixels:[0,0,1,1,0, 0,1,0,0,0, 1,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,2.95,.01,.01,.01] },
-  { id:'7', label:'Seven', emoji:'7️⃣', color:'#f97316', pixels:[1,1,1,1,1, 0,0,0,1,0, 0,0,1,0,0, 0,1,0,0,0, 1,0,0,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,2.95,.01,.01] },
-  { id:'8', label:'Eight', emoji:'8️⃣', color:'#14b8a6', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,2.95,.01] },
-  { id:'9', label:'Nine', emoji:'9️⃣', color:'#a855f7', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,1, 0,0,0,1,0, 0,1,1,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,.01,2.95] }
+  { id:'0', label:'Zero', imgUrl:'images/mnist/0.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'0️⃣', color:'#3b82f6', pixels:[0,1,1,1,0, 1,0,0,0,1, 1,0,0,0,1, 1,0,0,0,1, 0,1,1,1,0], outWeights:[2.95,.01,.01,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'1', label:'One', imgUrl:'images/mnist/1.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'1️⃣', color:'#f59e0b', pixels:[0,0,1,0,0, 0,1,1,0,0, 0,0,1,0,0, 0,0,1,0,0, 0,1,1,1,0], outWeights:[.01,2.95,.01,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'2', label:'Two', imgUrl:'images/mnist/2.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'2️⃣', color:'#10b981', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,0,0,1,0, 0,0,1,0,0, 1,1,1,1,1], outWeights:[.01,.01,2.95,.01,.01,.01,.01,.01,.01,.01] },
+  { id:'3', label:'Three', imgUrl:'images/mnist/3.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'3️⃣', color:'#ec4899', pixels:[1,1,1,1,0, 0,0,0,0,1, 0,0,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,2.95,.01,.01,.01,.01,.01,.01] },
+  { id:'4', label:'Four', imgUrl:'images/mnist/4.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'4️⃣', color:'#8b5cf6', pixels:[0,0,0,1,0, 0,0,1,1,0, 0,1,0,1,0, 1,1,1,1,1, 0,0,0,1,0], outWeights:[.01,.01,.01,.01,2.95,.01,.01,.01,.01,.01] },
+  { id:'5', label:'Five', imgUrl:'images/mnist/5.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'5️⃣', color:'#ef4444', pixels:[1,1,1,1,1, 1,0,0,0,0, 1,1,1,1,0, 0,0,0,0,1, 1,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,2.95,.01,.01,.01,.01] },
+  { id:'6', label:'Six', imgUrl:'images/mnist/6.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'6️⃣', color:'#06b6d4', pixels:[0,0,1,1,0, 0,1,0,0,0, 1,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,2.95,.01,.01,.01] },
+  { id:'7', label:'Seven', imgUrl:'images/mnist/7.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'7️⃣', color:'#f97316', pixels:[1,1,1,1,1, 0,0,0,1,0, 0,0,1,0,0, 0,1,0,0,0, 1,0,0,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,2.95,.01,.01] },
+  { id:'8', label:'Eight', imgUrl:'images/mnist/8.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'8️⃣', color:'#14b8a6', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,2.95,.01] },
+  { id:'9', label:'Nine', imgUrl:'images/mnist/9.png', drawSVG(S,x,y,w,h,dk,cm){makeImgDrawSVG(this.imgUrl,this.color)(S,x,y,w,h,dk,cm);}, emoji:'9️⃣', color:'#a855f7', pixels:[0,1,1,1,0, 1,0,0,0,1, 0,1,1,1,1, 0,0,0,1,0, 0,1,1,0,0], outWeights:[.01,.01,.01,.01,.01,.01,.01,.01,.01,2.95] }
 ];
 
 // ─── SVG shape helpers ────────────────────────────────────────
@@ -595,7 +595,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
     fill:isDark?'rgba(15,23,42,.95)':'#ffffff',
     stroke:veh.color,'stroke-width':'1.8'}));
   const vGroup=el('g',{});
-  vGroup.appendChild(el('text', {x:panelLeft+IMG_W/2,y:imgY+IMG_H*0.75,'text-anchor':'middle','font-size':IMG_H*0.7,fill:isDark?'white':'#0f172a'})).textContent=veh.emoji;
+  veh.drawSVG(vGroup,panelLeft,imgY,IMG_W,IMG_H,isDark,colorMode);
   g.appendChild(vGroup);
 
   // Scan line on image
