@@ -148,6 +148,10 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
 #wt-tip{position:fixed;pointer-events:none;opacity:0;background:var(--tip-bg);font-size:11px;font-weight:600;padding:5px 10px;border-radius:7px;transition:opacity 0.15s;white-space:nowrap;z-index:999;box-shadow:0 3px 12px rgba(0,0,0,0.2);border:1px solid var(--sb-border)}
 .app.dark #wt-tip{color:#fff}
 .app.light #wt-tip{color:#fff}
+
+/* ── Matrix multiplication panel ── */
+#mat-panel{position:fixed;pointer-events:none;opacity:0;background:var(--tip-bg);border:1px solid rgba(99,102,241,.35);border-radius:14px;padding:14px 16px;z-index:1000;box-shadow:0 12px 40px rgba(0,0,0,0.45);font-family:'JetBrains Mono',monospace;font-size:10px;transition:opacity 0.2s;white-space:nowrap;}
+.app.dark #mat-panel{color:#f1f5f9}.app.light #mat-panel{color:#1e293b}
 </style>
 </head>
 <body>
@@ -237,23 +241,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
       <hr class="sdiv">
 
       <div class="section" id="demo-section">
-        <div class="section-label">SETTINGS</div>
-        <div class="sl-row">
-          <span class="sl-lbl">Vehicle Grid</span>
-          <div class="counter">
-            <button class="counter-btn" id="vs-minus" onclick="stepVehSize(-1)">−</button>
-            <input type="number" class="counter-val" id="vsv" value="4" min="2" max="10" oninput="typeVehSize(this,false)" onblur="typeVehSize(this,true)">
-            <button class="counter-btn" id="vs-plus" onclick="stepVehSize(1)">+</button>
-          </div>
-        </div>
-        <div class="sl-row">
-          <span class="sl-lbl">Number Grid</span>
-          <div class="counter">
-            <button class="counter-btn" id="ms-minus" onclick="stepMNISTSize(-1)">−</button>
-            <input type="number" class="counter-val" id="msv" value="16" min="4" max="28" oninput="typeMNISTSize(this,false)" onblur="typeMNISTSize(this,true)">
-            <button class="counter-btn" id="ms-plus" onclick="stepMNISTSize(1)">+</button>
-          </div>
-        </div>
+        <div class="section-label" id="settings-label" style="display:none">SETTINGS</div>
         <div id="img-mode-row" style="display:none;margin-top:8px">
           <div class="toggle-row">
             <span class="tgl-lbl">Color Mode</span>
@@ -276,6 +264,7 @@ input[type=range].int-sl::-webkit-slider-thumb{background:#f59e0b}
     <div id="stats-panel" style="display:none"></div>
   </div>
   <div id="wt-tip"></div>
+  <div id="mat-panel"></div>
 </div>
 
 <script>
@@ -666,7 +655,9 @@ function toggleDemo(type){
   document.getElementById('arch-section').classList.remove('dim');
   document.getElementById('sl-output').closest('.sl-row').style.opacity=demoMode?'0.35':'1';
   document.getElementById('sl-output').closest('.sl-row').style.pointerEvents=demoMode?'none':'auto';
-  document.getElementById('img-mode-row').style.display=(demoMode && demoType === 'vehicle')?'block':'none';
+  const _showSettings=(demoMode && demoType === 'vehicle');
+  document.getElementById('img-mode-row').style.display=_showSettings?'block':'none';
+  document.getElementById('settings-label').style.display=_showSettings?'block':'none';
   
   if(demoMode) {
     demoVehicleIdx = Math.floor(Math.random() * activeData.length);
@@ -885,7 +876,7 @@ function updateStats(layers,acts){
 }
 
 // === Classification input panel ===============================
-function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
+function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt,centerOffset=0){
   const CELL = demoType==='mnist' ? Math.max(4,Math.min(12,Math.floor(120/mnistSize))) : Math.max(8,Math.min(26,Math.floor(120/vehSize)));
   const COLS = demoType==='mnist' ? mnistSize : vehSize, ROWS = demoType==='mnist' ? mnistSize : vehSize;
   const GRID_W=COLS*CELL, GRID_H=ROWS*CELL;
@@ -893,7 +884,7 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   const IMG_H = (demoType === 'mnist' ? 110 : 100);
   const currentVSP = pos[0].length > 1 ? pos[0][1].y - pos[0][0].y : 20;
   const PILL_W=44, PILL_H=Math.max(6, Math.min(18, currentVSP - 1)), PILL_R=Math.min(5, PILL_H/2);
-  const panelLeft=10;
+  const panelLeft=10+centerOffset;
 
   const dispN=Math.min(nInput, pos[0].length);
   // For MNIST: downsample 5×5=25 pixels to 16 values for the flat vector
@@ -910,8 +901,8 @@ function drawVehiclePanel(svg,veh,pos,NODE_R,H,tc,nInput,tExt){
   const lastNodeY=pos[0][Math.min(dispN-1, pos[0].length-1)].y;
   const nodeSpanCenter=(firstNodeY+lastNodeY)/2;
 
-  const imgY=Math.max(50, nodeSpanCenter - IMG_H/2 - 20);
-  const gridY=Math.max(imgY, nodeSpanCenter - GRID_H/2);
+  const imgY=Math.max(50, nodeSpanCenter - Math.max(IMG_H,GRID_H)/2);
+  const gridY=imgY;
   const gridX=panelLeft+IMG_W+40;
   const flatX=gridX+GRID_W+80;
 
@@ -1254,6 +1245,110 @@ function drawClassPanel(svg,veh,pos,NODE_R,H,tc,tArrRaw){
   });
 }
 
+// ═══ Matrix Multiplication Panel ══════════════════════════════
+function showMatPanel(li, layers, acts, event){
+  const MAX_R=6, MAX_C=5;
+  const panel=document.getElementById('mat-panel');
+  const isLast=li===layers.length-1;
+  const fromN=layers[li];
+  const toN=isLast?0:layers[li+1];
+
+  // Color helpers
+  const vc=(v)=>v>.55?'#34d399':v<.25?'#f87171':'#94a3b8';
+  const wc=(w)=>w>.2?'#34d399':w<-.2?'#f87171':'#94a3b8';
+
+  // CSS-border brackets (stretch to content height)
+  const BL=`<div style="width:5px;border-left:2px solid #475569;border-top:1.5px solid #475569;border-bottom:1.5px solid #475569;border-radius:3px 0 0 3px;flex-shrink:0"></div>`;
+  const BR=`<div style="width:5px;border-right:2px solid #475569;border-top:1.5px solid #475569;border-bottom:1.5px solid #475569;border-radius:0 3px 3px 0;flex-shrink:0"></div>`;
+  const dots=`<div style="color:#64748b;text-align:center;font-size:10px;line-height:14px;padding:0 4px">⋮</div>`;
+
+  // A labelled tensor block (vector or matrix)
+  function tensor(lbl, inner){
+    return `<div style="display:flex;flex-direction:column;align-items:stretch">
+      <div style="text-align:center;font-size:8px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:#64748b;margin-bottom:4px;font-family:Inter,sans-serif">${lbl}</div>
+      <div style="display:flex;align-items:stretch;flex:1">${BL}<div>${inner}</div>${BR}</div>
+    </div>`;
+  }
+
+  // Operator (vertically centred; margin-top offsets the label row above each tensor)
+  const op=(s)=>`<div style="align-self:center;margin-top:20px;font-size:18px;color:#818cf8;font-weight:700;padding:0 4px;opacity:.85;font-family:Inter,sans-serif">${s}</div>`;
+
+  // Single numeric cell with fixed width
+  const cell=(txt,clr,w)=>`<div style="padding:1px 4px;font-size:9px;line-height:16px;text-align:right;color:${clr};width:${w};font-variant-numeric:tabular-nums;box-sizing:content-box">${txt}</div>`;
+
+  let html=`<div style="font-size:11px;font-weight:700;color:#818cf8;margin-bottom:2px;font-family:Inter,sans-serif">`;
+
+  if(isLast){
+    html+=`Output Layer <span style="color:#64748b;font-size:9px;font-weight:400"> [${fromN} nodes]</span></div>`;
+    html+=`<div style="font-size:9px;color:#64748b;margin-bottom:10px;font-style:italic;font-family:Inter,sans-serif">Softmax → class probabilities</div>`;
+    let inner='';
+    const dr=Math.min(fromN,MAX_R+1);
+    for(let i=0;i<dr;i++){
+      if(i===MAX_R&&fromN>MAX_R+1){inner+=dots;break;}
+      const v=acts[li][i]; inner+=cell(v.toFixed(4),vc(v),'46px');
+    }
+    html+=tensor(`activations [${fromN}]`, inner);
+  } else {
+    const dr=Math.min(fromN,MAX_R), dc=Math.min(toN,MAX_C);
+    const moreR=fromN>MAX_R, moreC=toN>MAX_C;
+
+    html+=`Layer ${li} → Layer ${li+1} <span style="color:#64748b;font-size:9px;font-weight:400"> W: ${fromN}×${toN}</span></div>`;
+    html+=`<div style="font-size:9px;color:#64748b;margin-bottom:10px;font-style:italic;font-family:Inter,sans-serif">z = σ(W · x) — hover connections for individual weights</div>`;
+    html+=`<div style="display:flex;align-items:flex-start;gap:6px">`;
+
+    // x vector
+    let xIn='';
+    for(let i=0;i<dr;i++){const v=acts[li][i]; xIn+=cell(v.toFixed(3),vc(v),'38px');}
+    if(moreR) xIn+=dots;
+    html+=tensor(`x [${fromN}]`, xIn);
+
+    html+=op('×');
+
+    // W matrix
+    let wIn='';
+    for(let r=0;r<dr;r++){
+      wIn+=`<div style="display:flex;gap:1px">`;
+      for(let c=0;c<dc;c++){
+        const w=weights[`${li}-${r}-${c}`]||0;
+        wIn+=cell((w>=0?'+':'')+w.toFixed(2),wc(w),'34px');
+      }
+      if(moreC) wIn+=`<div style="font-size:9px;color:#64748b;line-height:16px;padding:1px 3px">…</div>`;
+      wIn+=`</div>`;
+    }
+    if(moreR) wIn+=dots;
+    html+=tensor(`W [${fromN}×${toN}]`, wIn);
+
+    html+=op('=');
+
+    // z vector
+    let zIn='';
+    const dro=Math.min(toN,MAX_R);
+    for(let i=0;i<dro;i++){const v=acts[li+1][i]; zIn+=cell(v.toFixed(3),vc(v),'38px');}
+    if(toN>MAX_R) zIn+=dots;
+    html+=tensor(`z [${toN}]`, zIn);
+
+    html+=`</div>`; // close flex row
+  }
+
+  panel.innerHTML=html;
+  panel.style.opacity='1';
+  _posMatPanel(event.clientX, event.clientY);
+}
+
+function _posMatPanel(cx,cy){
+  const panel=document.getElementById('mat-panel');
+  const pw=panel.offsetWidth||300, ph=panel.offsetHeight||200;
+  let lx=cx+18, ly=cy-10;
+  if(lx+pw>window.innerWidth-8) lx=cx-pw-18;
+  if(ly+ph>window.innerHeight-8) ly=window.innerHeight-ph-8;
+  if(ly<8) ly=8;
+  panel.style.left=lx+'px';panel.style.top=ly+'px';
+}
+
+function hideMatPanel(){
+  document.getElementById('mat-panel').style.opacity='0';
+}
+
 // ═══ Build Network ════════════════════════════════════════════
 function buildNetwork(keepWeights=false){
   const nHidden=+document.getElementById('sl-layers').value;
@@ -1319,7 +1414,7 @@ function buildNetwork(keepWeights=false){
   const xStep=Math.min(220,Math.max(90,(layoutW-PAD_X-RIGHT_PAD)/Math.max(1,total-1)));
   const contentW=PAD_X+xStep*(total-1)+RIGHT_PAD;
   const contentH=VSP*(maxN+1)+PAD_Y*2;
-  const centerOffset=demoMode?0:Math.max(0,Math.floor((availW-contentW)/2));
+  const centerOffset=Math.max(0,Math.floor((availW-contentW)/2));
   const centerOffsetY=demoMode?0:Math.max(0,Math.floor((availH-contentH)/2));
   const W=availW;
   const H=Math.max(availH,contentH);
@@ -1365,7 +1460,7 @@ function buildNetwork(keepWeights=false){
     return Array.from({length:n},(_,ni)=>({x,y:PAD_Y+centerOffsetY+VSP*(ni+1)+(VSP*(maxN-n))/2}));
   });
 
-  if(demoMode) drawVehiclePanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc,nInput,tExt);
+  if(demoMode) drawVehiclePanel(svg,activeData[demoVehicleIdx],pos,NODE_R,H,tc,nInput,tExt,centerOffset);
 
   const tip=document.getElementById('wt-tip');
   const arrivals=[{arriveAt: tExt + nSeg*layerDur}];
@@ -1438,7 +1533,8 @@ function buildNetwork(keepWeights=false){
     const pw=name.length*6.8+20;
     const pg=el('g',{class:'nn-label'});
     const ly0=centerOffsetY+13,ly1=centerOffsetY+28;
-    pg.appendChild(el('rect',{x:cx-pw/2,y:ly0,width:pw,height:22,rx:11,fill:isDark?'rgba(10,15,30,.9)':'#fff',stroke:col.stroke,'stroke-width':'1.4'}));
+    const pgRect=el('rect',{x:cx-pw/2,y:ly0,width:pw,height:22,rx:11,fill:isDark?'rgba(10,15,30,.9)':'#fff',stroke:col.stroke,'stroke-width':'1.4'});
+    pg.appendChild(pgRect);
     const pt=el('text',{x:cx,y:ly1,'text-anchor':'middle','font-family':'Inter,sans-serif','font-size':'10.5','font-weight':'600',fill:col.text});
     pt.textContent=name;pg.appendChild(pt);
 
@@ -1454,6 +1550,22 @@ function buildNetwork(keepWeights=false){
         fill:isDark?'#818cf8':'#6366f1'});
       sizeNote.textContent=tensorSize;pg.appendChild(sizeNote);
     }
+
+    // ── Matrix hover hitbox on layer label ──
+    const mhit=el('rect',{x:cx-pw/2-8,y:ly0-5,width:pw+16,height:34,rx:11,fill:'transparent',style:'cursor:help'});
+    mhit.addEventListener('mouseenter',ev=>{
+      gsap.to(pgRect,{attr:{'stroke-width':'2.5'},duration:.2,ease:'back.out(2)'});
+      showMatPanel(li,layers,acts,ev);
+    });
+    mhit.addEventListener('mousemove',ev=>{
+      const p=document.getElementById('mat-panel');
+      if(p.style.opacity==='1') _posMatPanel(ev.clientX,ev.clientY);
+    });
+    mhit.addEventListener('mouseleave',()=>{
+      gsap.to(pgRect,{attr:{'stroke-width':'1.4'},duration:.3,ease:'elastic.out(1,.5)'});
+      hideMatPanel();
+    });
+    pg.appendChild(mhit);
 
     svg.appendChild(pg);
     svg.appendChild(el('line',{x1:cx,y1:centerOffsetY+(demoMode&&li===0?56:35),x2:cx,y2:topY-NODE_R-4,stroke:col.stroke,'stroke-width':'1',opacity:'.25','stroke-dasharray':'3 4'}));
