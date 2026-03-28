@@ -1551,20 +1551,22 @@ function buildNetwork(keepWeights=false){
       sizeNote.textContent=tensorSize;pg.appendChild(sizeNote);
     }
 
-    // ── Matrix hover hitbox on layer label ──
-    const mhit=el('rect',{x:cx-pw/2-8,y:ly0-5,width:pw+16,height:34,rx:11,fill:'transparent',style:'cursor:help'});
-    mhit.addEventListener('mouseenter',ev=>{
-      gsap.to(pgRect,{attr:{'stroke-width':'2.5'},duration:.2,ease:'back.out(2)'});
-      showMatPanel(li,layers,acts,ev);
-    });
-    mhit.addEventListener('mousemove',ev=>{
-      const p=document.getElementById('mat-panel');
-      if(p.style.opacity==='1') _posMatPanel(ev.clientX,ev.clientY);
-    });
-    mhit.addEventListener('mouseleave',()=>{
-      gsap.to(pgRect,{attr:{'stroke-width':'1.4'},duration:.3,ease:'elastic.out(1,.5)'});
-      hideMatPanel();
-    });
+    // ── Matrix hover hitbox on layer label (skip input layer — it has no incoming weights) ──
+    const mhit=el('rect',{x:cx-pw/2-8,y:ly0-5,width:pw+16,height:34,rx:11,fill:'transparent',style:li>0?'cursor:help':''});
+    if(li>0){
+      mhit.addEventListener('mouseenter',ev=>{
+        gsap.to(pgRect,{attr:{'stroke-width':'2.5'},duration:.2,ease:'back.out(2)'});
+        showMatPanel(li,layers,acts,ev);
+      });
+      mhit.addEventListener('mousemove',ev=>{
+        const p=document.getElementById('mat-panel');
+        if(p.style.opacity==='1') _posMatPanel(ev.clientX,ev.clientY);
+      });
+      mhit.addEventListener('mouseleave',()=>{
+        gsap.to(pgRect,{attr:{'stroke-width':'1.4'},duration:.3,ease:'elastic.out(1,.5)'});
+        hideMatPanel();
+      });
+    }
     pg.appendChild(mhit);
 
     svg.appendChild(pg);
